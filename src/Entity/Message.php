@@ -32,6 +32,10 @@ class Message
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'messagesAvertis')]
     private Collection $avertisseurs;
 
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $utilisateur = null;
+
     public function __construct()
     {
         $this->avertisseurs = new ArrayCollection();
@@ -101,6 +105,18 @@ class Message
         if ($this->avertisseurs->removeElement($avertisseur)) {
             $avertisseur->removeMessagesAverti($this);
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
