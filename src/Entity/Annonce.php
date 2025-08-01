@@ -134,9 +134,16 @@ class Annonce
     #[ORM\ManyToMany(targetEntity: Document::class, inversedBy: 'annonces')]
     private Collection $documents;
 
+    /**
+     * @var Collection<int, Photo>
+     */
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'annonce')]
+    private Collection $photos;
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
+        $this->photos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -608,6 +615,36 @@ class Annonce
     public function removeDocument(Document $document): static
     {
         $this->documents->removeElement($document);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Photo>
+     */
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
+
+    public function addPhoto(Photo $photo): static
+    {
+        if (!$this->photos->contains($photo)) {
+            $this->photos->add($photo);
+            $photo->setAnnonce($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(Photo $photo): static
+    {
+        if ($this->photos->removeElement($photo)) {
+            // set the owning side to null (unless already changed)
+            if ($photo->getAnnonce() === $this) {
+                $photo->setAnnonce(null);
+            }
+        }
 
         return $this;
     }
