@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AnnonceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -125,6 +127,17 @@ class Annonce
     #[ORM\ManyToOne(inversedBy: 'annonces')]
     #[ORM\JoinColumn(nullable: false)]
     private ?NatureBien $natureBien = null;
+
+    /**
+     * @var Collection<int, Document>
+     */
+    #[ORM\ManyToMany(targetEntity: Document::class, inversedBy: 'annonces')]
+    private Collection $documents;
+
+    public function __construct()
+    {
+        $this->documents = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -571,6 +584,30 @@ class Annonce
     public function setNatureBien(?NatureBien $natureBien): static
     {
         $this->natureBien = $natureBien;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Document>
+     */
+    public function getDocuments(): Collection
+    {
+        return $this->documents;
+    }
+
+    public function addDocument(Document $document): static
+    {
+        if (!$this->documents->contains($document)) {
+            $this->documents->add($document);
+        }
+
+        return $this;
+    }
+
+    public function removeDocument(Document $document): static
+    {
+        $this->documents->removeElement($document);
 
         return $this;
     }
