@@ -140,6 +140,10 @@ class Annonce
     #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'annonce')]
     private Collection $photos;
 
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Transaction $transaction = null;
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
@@ -645,6 +649,18 @@ class Annonce
                 $photo->setAnnonce(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTransaction(): ?Transaction
+    {
+        return $this->transaction;
+    }
+
+    public function setTransaction(?Transaction $transaction): static
+    {
+        $this->transaction = $transaction;
 
         return $this;
     }
