@@ -63,11 +63,18 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'utilisateur')]
     private Collection $messages;
 
+    /**
+     * @var Collection<int, Sujet>
+     */
+    #[ORM\OneToMany(targetEntity: Sujet::class, mappedBy: 'utilisateur')]
+    private Collection $sujets;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
         $this->messagesAvertis = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->sujets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -273,6 +280,36 @@ class Utilisateur
             // set the owning side to null (unless already changed)
             if ($message->getUtilisateur() === $this) {
                 $message->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sujet>
+     */
+    public function getSujets(): Collection
+    {
+        return $this->sujets;
+    }
+
+    public function addSujet(Sujet $sujet): static
+    {
+        if (!$this->sujets->contains($sujet)) {
+            $this->sujets->add($sujet);
+            $sujet->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSujet(Sujet $sujet): static
+    {
+        if ($this->sujets->removeElement($sujet)) {
+            // set the owning side to null (unless already changed)
+            if ($sujet->getUtilisateur() === $this) {
+                $sujet->setUtilisateur(null);
             }
         }
 
