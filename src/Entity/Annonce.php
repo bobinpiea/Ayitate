@@ -144,6 +144,9 @@ class Annonce
     #[ORM\JoinColumn(nullable: false)]
     private ?Transaction $transaction = null;
 
+    #[ORM\ManyToOne(inversedBy: 'annoncesCertifiees')]
+    private ?Utilisateur $certifiePar = null;
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
@@ -661,6 +664,18 @@ class Annonce
     public function setTransaction(?Transaction $transaction): static
     {
         $this->transaction = $transaction;
+
+        return $this;
+    }
+
+    public function getCertifiePar(): ?Utilisateur
+    {
+        return $this->certifiePar;
+    }
+
+    public function setCertifiePar(?Utilisateur $certifiePar): static
+    {
+        $this->certifiePar = $certifiePar;
 
         return $this;
     }

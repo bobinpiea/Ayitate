@@ -75,6 +75,12 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Categorie::class, mappedBy: 'utilisateur')]
     private Collection $categories;
 
+    /**
+     * @var Collection<int, Annonce>
+     */
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'certifiePar')]
+    private Collection $annoncesCertifiees;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
@@ -82,6 +88,7 @@ class Utilisateur
         $this->messages = new ArrayCollection();
         $this->sujets = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->annoncesCertifiees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -347,6 +354,36 @@ class Utilisateur
             // set the owning side to null (unless already changed)
             if ($category->getUtilisateur() === $this) {
                 $category->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getAnnoncesCertifiees(): Collection
+    {
+        return $this->annoncesCertifiees;
+    }
+
+    public function addAnnoncesCertifiee(Annonce $annoncesCertifiee): static
+    {
+        if (!$this->annoncesCertifiees->contains($annoncesCertifiee)) {
+            $this->annoncesCertifiees->add($annoncesCertifiee);
+            $annoncesCertifiee->setCertifiePar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnoncesCertifiee(Annonce $annoncesCertifiee): static
+    {
+        if ($this->annoncesCertifiees->removeElement($annoncesCertifiee)) {
+            // set the owning side to null (unless already changed)
+            if ($annoncesCertifiee->getCertifiePar() === $this) {
+                $annoncesCertifiee->setCertifiePar(null);
             }
         }
 
