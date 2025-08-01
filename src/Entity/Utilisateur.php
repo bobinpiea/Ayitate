@@ -51,9 +51,16 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Blog::class, mappedBy: 'utilisateur')]
     private Collection $blogs;
 
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\ManyToMany(targetEntity: Message::class, inversedBy: 'utilisateurs')]
+    private Collection $messagesAvertis;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
+        $this->messagesAvertis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,6 +214,30 @@ class Utilisateur
                 $blog->setUtilisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesAvertis(): Collection
+    {
+        return $this->messagesAvertis;
+    }
+
+    public function addMessagesAverti(Message $messagesAverti): static
+    {
+        if (!$this->messagesAvertis->contains($messagesAverti)) {
+            $this->messagesAvertis->add($messagesAverti);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesAverti(Message $messagesAverti): static
+    {
+        $this->messagesAvertis->removeElement($messagesAverti);
 
         return $this;
     }

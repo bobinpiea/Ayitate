@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,6 +25,17 @@ class Message
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Sujet $sujet = null;
+
+    /**
+     * @var Collection<int, Utilisateur>
+     */
+    #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'messagesAvertis')]
+    private Collection $avertisseurs;
+
+    public function __construct()
+    {
+        $this->avertisseurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -61,6 +74,33 @@ class Message
     public function setSujet(?Sujet $sujet): static
     {
         $this->sujet = $sujet;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Utilisateur>
+     */
+    public function getAvertisseurs(): Collection
+    {
+        return $this->avertisseurs;
+    }
+
+    public function addAvertisseur(Utilisateur $avertisseur): static
+    {
+        if (!$this->avertisseurs->contains($avertisseur)) {
+            $this->avertisseurs->add($avertisseur);
+            $avertisseur->addMessagesAverti($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvertisseur(Utilisateur $avertisseur): static
+    {
+        if ($this->avertisseurs->removeElement($avertisseur)) {
+            $avertisseur->removeMessagesAverti($this);
+        }
 
         return $this;
     }
