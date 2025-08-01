@@ -122,6 +122,10 @@ class Annonce
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $statut = null;
 
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?NatureBien $natureBien = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -555,6 +559,18 @@ class Annonce
     public function setStatut(?string $statut): static
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getNatureBien(): ?NatureBien
+    {
+        return $this->natureBien;
+    }
+
+    public function setNatureBien(?NatureBien $natureBien): static
+    {
+        $this->natureBien = $natureBien;
 
         return $this;
     }
