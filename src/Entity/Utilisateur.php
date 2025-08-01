@@ -87,6 +87,12 @@ class Utilisateur
     #[ORM\ManyToMany(targetEntity: Annonce::class, inversedBy: 'utilisateursFavoris')]
     private Collection $favoris;
 
+    /**
+     * @var Collection<int, Annonce>
+     */
+    #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'publiePar')]
+    private Collection $annonces;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
@@ -96,6 +102,7 @@ class Utilisateur
         $this->categories = new ArrayCollection();
         $this->annoncesCertifiees = new ArrayCollection();
         $this->favoris = new ArrayCollection();
+        $this->annonces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -417,6 +424,36 @@ class Utilisateur
     public function removeFavori(Annonce $favori): static
     {
         $this->favoris->removeElement($favori);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getAnnonces(): Collection
+    {
+        return $this->annonces;
+    }
+
+    public function addAnnonce(Annonce $annonce): static
+    {
+        if (!$this->annonces->contains($annonce)) {
+            $this->annonces->add($annonce);
+            $annonce->setPubliePar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnnonce(Annonce $annonce): static
+    {
+        if ($this->annonces->removeElement($annonce)) {
+            // set the owning side to null (unless already changed)
+            if ($annonce->getPubliePar() === $this) {
+                $annonce->setPubliePar(null);
+            }
+        }
 
         return $this;
     }

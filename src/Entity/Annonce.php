@@ -153,6 +153,9 @@ class Annonce
     #[ORM\ManyToMany(targetEntity: Utilisateur::class, mappedBy: 'favoris')]
     private Collection $utilisateursFavoris;
 
+    #[ORM\ManyToOne(inversedBy: 'annonces')]
+    private ?Utilisateur $publiePar = null;
+
     public function __construct()
     {
         $this->documents = new ArrayCollection();
@@ -710,6 +713,18 @@ class Annonce
         if ($this->utilisateursFavoris->removeElement($utilisateursFavori)) {
             $utilisateursFavori->removeFavori($this);
         }
+
+        return $this;
+    }
+
+    public function getPubliePar(): ?Utilisateur
+    {
+        return $this->publiePar;
+    }
+
+    public function setPubliePar(?Utilisateur $publiePar): static
+    {
+        $this->publiePar = $publiePar;
 
         return $this;
     }
