@@ -19,6 +19,12 @@ class Signalement
     #[ORM\Column(length: 100)]
     private ?string $typeSignalement = null;
 
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
+    private ?Utilisateur $utilisateur = null;
+
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
+    private ?Annonce $annonce = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +50,30 @@ class Signalement
     public function setTypeSignalement(string $typeSignalement): static
     {
         $this->typeSignalement = $typeSignalement;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function getAnnonce(): ?Annonce
+    {
+        return $this->annonce;
+    }
+
+    public function setAnnonce(?Annonce $annonce): static
+    {
+        $this->annonce = $annonce;
 
         return $this;
     }

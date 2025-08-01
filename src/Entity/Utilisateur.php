@@ -93,6 +93,12 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'publiePar')]
     private Collection $annonces;
 
+    /**
+     * @var Collection<int, Signalement>
+     */
+    #[ORM\OneToMany(targetEntity: Signalement::class, mappedBy: 'utilisateur')]
+    private Collection $signalements;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
@@ -103,6 +109,7 @@ class Utilisateur
         $this->annoncesCertifiees = new ArrayCollection();
         $this->favoris = new ArrayCollection();
         $this->annonces = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -452,6 +459,36 @@ class Utilisateur
             // set the owning side to null (unless already changed)
             if ($annonce->getPubliePar() === $this) {
                 $annonce->setPubliePar(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalements(): Collection
+    {
+        return $this->signalements;
+    }
+
+    public function addSignalement(Signalement $signalement): static
+    {
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements->add($signalement);
+            $signalement->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalement(Signalement $signalement): static
+    {
+        if ($this->signalements->removeElement($signalement)) {
+            // set the owning side to null (unless already changed)
+            if ($signalement->getUtilisateur() === $this) {
+                $signalement->setUtilisateur(null);
             }
         }
 
