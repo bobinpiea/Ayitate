@@ -27,6 +27,10 @@ class Categorie
     #[ORM\OneToMany(targetEntity: Sujet::class, mappedBy: 'categorie')]
     private Collection $sujets;
 
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Utilisateur $utilisateur = null;
+
     public function __construct()
     {
         $this->sujets = new ArrayCollection();
@@ -87,6 +91,18 @@ class Categorie
                 $sujet->setCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

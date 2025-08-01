@@ -69,12 +69,19 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Sujet::class, mappedBy: 'utilisateur')]
     private Collection $sujets;
 
+    /**
+     * @var Collection<int, Categorie>
+     */
+    #[ORM\OneToMany(targetEntity: Categorie::class, mappedBy: 'utilisateur')]
+    private Collection $categories;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
         $this->messagesAvertis = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->sujets = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -310,6 +317,36 @@ class Utilisateur
             // set the owning side to null (unless already changed)
             if ($sujet->getUtilisateur() === $this) {
                 $sujet->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Categorie>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Categorie $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categorie $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            // set the owning side to null (unless already changed)
+            if ($category->getUtilisateur() === $this) {
+                $category->setUtilisateur(null);
             }
         }
 
