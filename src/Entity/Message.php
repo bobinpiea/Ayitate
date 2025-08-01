@@ -20,6 +20,10 @@ class Message
     #[ORM\Column(type: Types::TEXT)]
     private ?string $contenu = null;
 
+    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sujet $sujet = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +49,18 @@ class Message
     public function setContenu(string $contenu): static
     {
         $this->contenu = $contenu;
+
+        return $this;
+    }
+
+    public function getSujet(): ?Sujet
+    {
+        return $this->sujet;
+    }
+
+    public function setSujet(?Sujet $sujet): static
+    {
+        $this->sujet = $sujet;
 
         return $this;
     }
