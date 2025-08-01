@@ -81,6 +81,12 @@ class Utilisateur
     #[ORM\OneToMany(targetEntity: Annonce::class, mappedBy: 'certifiePar')]
     private Collection $annoncesCertifiees;
 
+    /**
+     * @var Collection<int, Annonce>
+     */
+    #[ORM\ManyToMany(targetEntity: Annonce::class, inversedBy: 'utilisateursFavoris')]
+    private Collection $favoris;
+
     public function __construct()
     {
         $this->blogs = new ArrayCollection();
@@ -89,6 +95,7 @@ class Utilisateur
         $this->sujets = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->annoncesCertifiees = new ArrayCollection();
+        $this->favoris = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -386,6 +393,30 @@ class Utilisateur
                 $annoncesCertifiee->setCertifiePar(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getFavoris(): Collection
+    {
+        return $this->favoris;
+    }
+
+    public function addFavori(Annonce $favori): static
+    {
+        if (!$this->favoris->contains($favori)) {
+            $this->favoris->add($favori);
+        }
+
+        return $this;
+    }
+
+    public function removeFavori(Annonce $favori): static
+    {
+        $this->favoris->removeElement($favori);
 
         return $this;
     }
